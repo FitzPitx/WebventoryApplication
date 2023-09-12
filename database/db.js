@@ -13,12 +13,15 @@ const conexion = {
     }
 }
 
-conexion.connect((err)=>{
-    if(err){
-        console.log('Error connecting to database' + err);
-        return
+async function conectarDB() {
+    try {
+      const pool = await sql.connect(conexion);
+      console.log('Connection established');
+      return pool;
+    } catch (error) {
+      console.error('Error connecting to database', error);
+      throw error;
     }
-    console.log('Connection established');
-});
+  }
 
 module.exports = conexion;
