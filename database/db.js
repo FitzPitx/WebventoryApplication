@@ -1,4 +1,4 @@
-const mysql = require('mssql');
+const sql = require('mssql');
 const conexion = {
     user: 'andresAdmin', // better stored in an app setting such as process.env.DB_USER
     password: 'Sandia2408$!', // better stored in an app setting such as process.env.DB_PASSWORD
