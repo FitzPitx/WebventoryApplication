@@ -40,7 +40,8 @@ async function conectarDB() {
         options: {
             encrypt: true
         }
-      }
+        }
+        pruebaConexion = await sql.connect(conexion);
       }
     } catch (error) {
       console.error('Error', error);
