@@ -1,10 +1,12 @@
 const sql = require('mssql');
-const conexion = {
-    user: 'andresAdmin', // better stored in an app setting such as process.env.DB_USER
-    password: 'Sandia2408$!', // better stored in an app setting such as process.env.DB_PASSWORD
-    server: 'mysqlserverandrew2408.database.windows.net', // better stored in an app setting such as process.env.DB_SERVER
-    port: 1433, // optional, defaults to 1433, better stored in an app setting such as process.env.DB_PORT
-    database: 'inventario', // better stored in an app setting such as process.env.DB_NAME
+let conexion = {};
+
+    conexion = {
+    user: process.env.DB_USER,
+    password : process.env.DB_PASS,
+    server: process.env.DB_HOST, // better stored in an app setting such as process.env.DB_SERVER
+    port: process.env.DB_NAME, // optional, defaults to 1433, better stored in an app setting such as process.env.DB_PORT
+    database : process.env.DB_DATABASE, // better stored in an app setting such as process.env.DB_NAME
     authentication: {
         type: 'default'
     },
@@ -13,13 +15,35 @@ const conexion = {
     }
 }
 
+conectarDB();
+ 
 async function conectarDB() {
-    try {
-      const pool = await sql.connect(conexion);
-      console.log('Connection established');
-      return pool;
+    try { 
+      try {
+        let pruebaConexion = await sql.connect(conexion);
+        if (pruebaConexion) {
+          let pool = pruebaConexion; 
+          console.log('estoy en la primera conexion');
+          return pool;
+        } 
+      } catch (error) {
+        console.log("estoy en la segunda conexion"); 
+        conexion = {
+        user : process.env.DB_USER2,
+        password : process.env.DB_PASS2,
+        server: process.env.DB_HOST2, // better stored in an app setting such as process.env.DB_SERVER
+        port: process.env.DB_NAME2, // optional, defaults to 1433, better stored in an app setting such as process.env.DB_PORT
+        database : process.env.DB_DATABASE2, // better stored in an app setting such as process.env.DB_NAME
+        authentication: {
+            type: 'default'
+        },
+        options: {
+            encrypt: true
+        }
+      }
+      }
     } catch (error) {
-      console.error('Error connecting to database', error);
+      console.error('Error', error);
       throw error;
     }
   }

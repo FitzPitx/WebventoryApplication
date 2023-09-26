@@ -2,6 +2,28 @@ const config = require('../database/db');
 const sql = require('mssql');
 const express = require('express');
 
+
+
+exports.show = async (req, res) => {
+    try {
+      await sql.connect(config);
+  
+      const request = new sql.Request();
+      const query = 'SELECT * FROM productos';
+  
+      const result = await request.query(query);
+      const results = result.recordset;
+  
+      res.render('show', { results: results });
+    } catch (error) {
+      // Manejar el error de conexión o consulta
+      console.error(error);
+      res.status(500).send('Error al consultar la base de datos');
+    } finally {
+      sql.close();
+    }
+  };
+//RUTA PARA GUARDAR UN REGISTRO
 exports.save = async (req, res) => {
     const nombreProducto = req.body.nombre_producto;
     const descripcionProducto = req.body.descrip_producto;
@@ -20,7 +42,7 @@ exports.save = async (req, res) => {
             request.input('precio_producto', sql.Int, precioProducto);
             const result = await request.query(query);
             console.log("Registro exitoso ",result);
-        }  catch (error){
+        }  catch (error){ 
             console.log('Error al insertar el registro ', error);
         } finally{
             if (pool){
@@ -28,12 +50,12 @@ exports.save = async (req, res) => {
             }
         }
     }
-    res.redirect('/');
+    res.redirect('/show');
 }  
 
 
 
-//RUTA PARA GUARDAR UN REGISTRO
+//RUTA PARA EDITAR UN REGISTRO
 exports.update = async(req, res)=>{
     const id = req.body.id;
     const nombreProducto = req.body.nombre_producto;
@@ -43,7 +65,7 @@ exports.update = async(req, res)=>{
 
     actualizarProducto(id, nombreProducto, descripcionProducto, cantidadProducto, precioProducto);
     
-
+ 
     async function actualizarProducto(id, nombreProducto, descripcionProducto, cantidadProducto, precioProducto){
         let pool;
         try{
@@ -65,5 +87,5 @@ exports.update = async(req, res)=>{
             }
         }
     }
-    res.redirect('/');
+    res.redirect('/show');
 }
